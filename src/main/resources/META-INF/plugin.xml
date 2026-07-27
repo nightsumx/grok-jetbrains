@@ -1,0 +1,80 @@
+<!-- Plugin Configuration File -->
+<idea-plugin>
+    <id>com.sum.grok.jetbrains</id>
+    <name>Grok Build</name>
+    <version>0.1.0</version>
+    <vendor email="lineryforjs@gmail.com" url="https://github.com/nightsumx/grok-jetbrains">lineryforjs</vendor>
+    <idea-version since-build="242" until-build="261.*"/>
+
+    <description><![CDATA[
+      <blockquote><p><strong>Requires</strong>
+      the <a href="https://docs.x.ai/docs">Grok Build CLI</a> installed separately
+      (<code>grok</code> on your PATH, or set it in Settings → Tools → Grok Build).</p></blockquote>
+
+      <p>Bring <b>Grok Build</b> into JetBrains IDEs (WebStorm, IntelliJ, PyCharm, GoLand, …):</p>
+      <ul>
+        <li><b>Open Grok</b> in the built-in terminal — <code>Ctrl+Esc</code></li>
+        <li><b>Send selection</b> — injects file path, line range, and selected code into the prompt
+            (<code>Ctrl+Alt+K</code> / <code>⌥⌘K</code>). No MCP round-trip needed for selection.</li>
+        <li><b>IDE MCP bridge</b> — open files, diagnostics, reformat, show diffs via a local HTTP MCP
+            server auto-registered in <code>~/.grok/config.toml</code></li>
+      </ul>
+
+      <p>Works like the Claude Code JetBrains bridge, adapted for the Grok Build CLI.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      <b>0.1.0</b>
+      <ul>
+        <li>Open Grok in the IDE terminal</li>
+        <li>Send selection: inject file + lines + body into the prompt</li>
+        <li>Local IDE MCP server (selection, files, diagnostics, diff)</li>
+        <li>Auto-register MCP in ~/.grok/config.toml</li>
+      </ul>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends optional="true" config-file="plugin-terminal.xml">org.jetbrains.plugins.terminal</depends>
+
+    <resource-bundle>messages.GrokBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.xai.grok.jetbrains.GrokStartup"/>
+        <applicationService serviceImplementation="com.xai.grok.jetbrains.settings.GrokSettings"/>
+        <applicationService serviceImplementation="com.xai.grok.jetbrains.services.IdeBridgeService"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.xai.grok.jetbrains.settings.GrokConfigurable"
+                id="com.sum.grok.jetbrains.settings"
+                displayName="Grok Build"
+                dynamic="true"/>
+        <notificationGroup id="GrokBuild" displayType="BALLOON"/>
+        <notificationGroup id="GrokBuildError" displayType="BALLOON"/>
+        <statusBarWidgetFactory
+                id="GrokBuildStatus"
+                implementation="com.xai.grok.jetbrains.GrokStatusBarFactory"/>
+    </extensions>
+
+    <actions>
+        <action id="com.sum.grok.jetbrains.OpenGrok"
+                class="com.xai.grok.jetbrains.actions.OpenGrokInTerminalAction"
+                text="Grok Build"
+                description="Open Grok Build in the built-in terminal"
+                icon="/icons/grok.svg">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl ESCAPE"/>
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="com.sum.grok.jetbrains.SendToGrok"
+                class="com.xai.grok.jetbrains.actions.SendToGrokAction"
+                text="Send to Grok Build"
+                description="Inject the current selection into the Grok prompt"
+                icon="/icons/grok.svg">
+            <keyboard-shortcut keymap="$default" first-keystroke="alt ctrl K"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt K"/>
+            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt K"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="Floating.CodeToolbar" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
