@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1200px; height: 760px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 20% 0%, #1a2332 0%, #0e0f12 55%);
+    color: #e8e8e8;
+    padding: 48px 56px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+  }
+  .logo {
+    width: 44px; height: 44px; border-radius: 10px; background: #111;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; color: #fff; border: 1px solid #333;
+  }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: #9aa3b2; font-size: 16px; margin: 8px 0 36px; max-width: 720px; line-height: 1.45; }
+  .grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 22px 22px 20px;
+  }
+  .card h2 { font-size: 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card p { font-size: 13.5px; color: #aeb6c2; line-height: 1.5; }
+  kbd {
+    display: inline-block; background: #1c1f26; border: 1px solid #3a3f4b;
+    border-radius: 5px; padding: 1px 7px; font-size: 12px; color: #e8e8e8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .pill {
+    display: inline-block; font-size: 11px; font-weight: 600; color: #7ee787;
+    background: rgba(126,231,135,0.1); border: 1px solid rgba(126,231,135,0.25);
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .foot {
+    margin-top: 32px; display: flex; justify-content: space-between; align-items: center;
+    color: #6b7280; font-size: 12px;
+  }
+  a { color: #8ab4f8; text-decoration: none; }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <div class="logo">G</div>
+    <h1>Grok Build for JetBrains</h1>
+  </div>
+  <p class="sub">
+    Open the agent in the Terminal, inject editor selections into prompts, and share IDE context
+    via a local MCP bridge — open source, Apache-2.0.
+  </p>
+  <div class="grid">
+    <div class="card">
+      <h2>⌘ Open Grok <span class="pill">Ctrl+Esc</span></h2>
+      <p>One shortcut opens a dedicated <b>Grok Build</b> terminal tab and runs <code>grok</code> in the project root.</p>
+    </div>
+    <div class="card">
+      <h2>⌘ Send selection <span class="pill">⌥⌘K</span></h2>
+      <p>Injects file path, line range, and selected body into the prompt — no MCP tool call required for context.</p>
+    </div>
+    <div class="card">
+      <h2>⌘ IDE MCP bridge</h2>
+      <p>Open files, diagnostics, reformat, and diffs. Auto-registers in <code>~/.grok/config.toml</code>.</p>
+    </div>
+    <div class="card">
+      <h2>⌘ Works with your stack</h2>
+      <p>WebStorm, IntelliJ, PyCharm, GoLand, and more (2024.2+). Requires the Grok Build CLI on the machine.</p>
+    </div>
+  </div>
+  <div class="foot">
+    <span>Not affiliated with xAI</span>
+    <a href="https://github.com/nightsumx/grok-jetbrains">github.com/nightsumx/grok-jetbrains</a>
+  </div>
+</body>
+</html>

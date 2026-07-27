@@ -1,0 +1,15 @@
+01-open-grok.png
+EN: Open Grok Build in the IDE terminal with Ctrl+Esc
+CN: Ctrl+Esc 在终端中一键打开 Grok Build
+
+02-send-selection.png
+EN: Send selection (⌥⌘K) — inject file, lines, and code into the prompt
+CN: 发送选区（⌥⌘K）— 把文件、行号与代码注入提示词
+
+03-settings.png
+EN: Settings → Tools → Grok Build (CLI path & MCP bridge)
+CN: 设置 → 工具 → Grok Build（CLI 路径与 MCP 桥）
+
+04-features.png
+EN: Feature overview — open agent, selection inject, MCP, multi-IDE
+CN: 功能总览 — 打开 Agent、选区注入、MCP、多 IDE

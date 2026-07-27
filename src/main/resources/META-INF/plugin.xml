@@ -7,29 +7,54 @@
     <idea-version since-build="242" until-build="261.*"/>
 
     <description><![CDATA[
-      <blockquote><p><strong>Requires</strong>
-      the <a href="https://docs.x.ai/docs">Grok Build CLI</a> installed separately
-      (<code>grok</code> on your PATH, or set it in Settings → Tools → Grok Build).</p></blockquote>
+      <blockquote>
+        <p><b>Requires</b> the
+        <a href="https://docs.x.ai/docs">Grok Build CLI</a>
+        installed separately (<code>grok</code> on your PATH, or set the path under
+        <b>Settings → Tools → Grok Build</b>).</p>
+      </blockquote>
 
-      <p>Bring <b>Grok Build</b> into JetBrains IDEs (WebStorm, IntelliJ, PyCharm, GoLand, …):</p>
+      <p><b>Grok Build</b> for JetBrains brings the coding agent into WebStorm, IntelliJ IDEA,
+      PyCharm, GoLand, PhpStorm, and other IDEs — similar in spirit to the Claude Code bridge.</p>
+
+      <h2>What you get</h2>
       <ul>
-        <li><b>Open Grok</b> in the built-in terminal — <code>Ctrl+Esc</code></li>
-        <li><b>Send selection</b> — injects file path, line range, and selected code into the prompt
-            (<code>Ctrl+Alt+K</code> / <code>⌥⌘K</code>). No MCP round-trip needed for selection.</li>
-        <li><b>IDE MCP bridge</b> — open files, diagnostics, reformat, show diffs via a local HTTP MCP
-            server auto-registered in <code>~/.grok/config.toml</code></li>
+        <li><b>Open Grok</b> — <code>Ctrl+Esc</code> (⌃Esc) opens a dedicated Terminal tab and runs <code>grok</code>.</li>
+        <li><b>Send selection</b> — <code>Ctrl+Alt+K</code> / <code>⌥⌘K</code> injects the current file,
+            line range, and selected code at the front of the Grok prompt. No MCP round-trip needed
+            for selection context.</li>
+        <li><b>IDE MCP bridge</b> — a local HTTP MCP server exposes open files, diagnostics, reformat,
+            and diff tools. Auto-registers as <code>[mcp_servers.jetbrains]</code> in
+            <code>~/.grok/config.toml</code>.</li>
+        <li><b>Status bar</b> — shows the live MCP port (<code>Grok:12345</code>).</li>
       </ul>
 
-      <p>Works like the Claude Code JetBrains bridge, adapted for the Grok Build CLI.</p>
+      <h2>Shortcuts</h2>
+      <ul>
+        <li><code>Ctrl+Esc</code> — Open / focus Grok Build terminal</li>
+        <li><code>Ctrl+Alt+K</code> / <code>⌥⌘K</code> — Send selection into Grok prompt</li>
+      </ul>
+
+      <h2>Requirements</h2>
+      <ul>
+        <li>JetBrains IDE 2024.2+</li>
+        <li>Grok Build CLI authenticated on this machine</li>
+        <li>Terminal plugin (bundled in WebStorm)</li>
+      </ul>
+
+      <p>Open source (Apache-2.0):
+      <a href="https://github.com/nightsumx/grok-jetbrains">github.com/nightsumx/grok-jetbrains</a><br/>
+      <i>Not affiliated with xAI.</i></p>
     ]]></description>
 
     <change-notes><![CDATA[
       <b>0.1.0</b>
       <ul>
-        <li>Open Grok in the IDE terminal</li>
-        <li>Send selection: inject file + lines + body into the prompt</li>
-        <li>Local IDE MCP server (selection, files, diagnostics, diff)</li>
-        <li>Auto-register MCP in ~/.grok/config.toml</li>
+        <li>Open Grok Build in the IDE terminal (<code>Ctrl+Esc</code>)</li>
+        <li>Send selection: inject file path, line range, and selected body into the prompt</li>
+        <li>Local IDE MCP server (context, files, diagnostics, reformat, diff)</li>
+        <li>Auto-register MCP in <code>~/.grok/config.toml</code></li>
+        <li>Status bar widget for MCP port</li>
       </ul>
     ]]></change-notes>
 

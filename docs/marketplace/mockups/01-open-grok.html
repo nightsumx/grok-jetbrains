@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1200px; height: 760px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: #1e1f22; color: #dfdfdf;
+  }
+  .chrome {
+    height: 36px; background: #2b2d30; display: flex; align-items: center;
+    padding: 0 14px; gap: 8px; border-bottom: 1px solid #1a1a1c;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .title { margin-left: 12px; font-size: 12px; color: #9a9a9a; }
+  .layout { display: flex; height: 724px; }
+  .sidebar {
+    width: 220px; background: #2b2d30; border-right: 1px solid #1a1a1c;
+    padding: 12px 0; font-size: 13px;
+  }
+  .sb-item { padding: 6px 16px; color: #a0a0a0; }
+  .sb-item.active { background: #43454a; color: #fff; border-radius: 4px; margin: 0 8px; padding: 6px 8px; }
+  .sb-label { padding: 10px 16px 4px; font-size: 11px; color: #6c6c6c; text-transform: uppercase; letter-spacing: .04em; }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .tabs { height: 34px; background: #2b2d30; display: flex; align-items: flex-end; gap: 2px; padding: 0 8px; border-bottom: 1px solid #1a1a1c; }
+  .tab { padding: 6px 14px; font-size: 12px; color: #8c8c8c; background: #3c3f41; border-radius: 6px 6px 0 0; }
+  .tab.on { background: #1e1f22; color: #e8e8e8; }
+  .editor {
+    flex: 1; padding: 16px 20px; font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 13px; line-height: 1.55; color: #a9b7c6; background: #1e1f22;
+  }
+  .ln { color: #4a4a4a; display: inline-block; width: 28px; user-select: none; }
+  .kw { color: #cc7832; } .str { color: #6a8759; } .fn { color: #ffc66d; } .cm { color: #808080; }
+  .term-wrap {
+    height: 280px; border-top: 1px solid #3c3f41; background: #0d0d0d;
+    display: flex; flex-direction: column;
+  }
+  .term-bar {
+    height: 28px; background: #2b2d30; display: flex; align-items: center;
+    padding: 0 10px; gap: 10px; font-size: 12px; border-bottom: 1px solid #1a1a1c;
+  }
+  .term-tab {
+    background: #1e1f22; color: #e8e8e8; padding: 3px 10px; border-radius: 4px 4px 0 0;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .badge {
+    width: 14px; height: 14px; border-radius: 3px; background: #111;
+    color: #fff; font-size: 9px; font-weight: 700; display: inline-flex;
+    align-items: center; justify-content: center;
+  }
+  .term-body {
+    flex: 1; padding: 14px 16px; font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12.5px; line-height: 1.5; color: #c8c8c8;
+  }
+  .muted { color: #6a6a6a; }
+  .accent { color: #7ee787; }
+  .prompt { color: #79c0ff; }
+  .cursor {
+    display: inline-block; width: 8px; height: 14px; background: #e8e8e8;
+    vertical-align: -2px; margin-left: 2px; animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .statusbar {
+    height: 24px; background: #2b2d30; border-top: 1px solid #1a1a1c;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 12px; font-size: 11px; color: #9a9a9a; gap: 14px;
+  }
+  .grok-status { color: #7ee787; font-weight: 600; }
+  .callout {
+    position: absolute; top: 52px; right: 28px;
+    background: #111; border: 1px solid #3d3d3d; border-radius: 10px;
+    padding: 14px 16px; width: 280px; box-shadow: 0 12px 40px rgba(0,0,0,.45);
+  }
+  .callout h1 { font-size: 15px; color: #fff; margin-bottom: 6px; }
+  .callout p { font-size: 12px; color: #a8a8a8; line-height: 1.45; }
+  .callout kbd {
+    display: inline-block; background: #2b2d30; border: 1px solid #444;
+    border-radius: 4px; padding: 1px 6px; font-size: 11px; color: #e8e8e8;
+    font-family: inherit; margin: 0 2px;
+  }
+  .wrap { position: relative; width: 1200px; height: 760px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="chrome">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="title">WebStorm — my-app</span>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sb-label">Project</div>
+      <div class="sb-item">src</div>
+      <div class="sb-item active">  app.ts</div>
+      <div class="sb-item">  utils.ts</div>
+      <div class="sb-item">package.json</div>
+    </div>
+    <div class="main">
+      <div class="tabs">
+        <div class="tab on">app.ts</div>
+        <div class="tab">utils.ts</div>
+      </div>
+      <div class="editor">
+        <div><span class="ln">1</span><span class="kw">export function</span> <span class="fn">greet</span>(name: <span class="kw">string</span>) {</div>
+        <div><span class="ln">2</span>&nbsp;&nbsp;<span class="kw">return</span> <span class="str">`Hello, ${name}`</span></div>
+        <div><span class="ln">3</span>}</div>
+        <div><span class="ln">4</span></div>
+        <div><span class="ln">5</span><span class="cm">// press Ctrl+Esc to open Grok Build</span></div>
+      </div>
+      <div class="term-wrap">
+        <div class="term-bar">
+          <span class="term-tab"><span class="badge">G</span> Grok Build</span>
+          <span class="muted">Terminal</span>
+        </div>
+        <div class="term-body">
+          <div class="muted">$ grok</div>
+          <div style="margin-top:8px">
+            <span class="accent">Grok Build</span> <span class="muted">· session ready · model grok-build</span>
+          </div>
+          <div style="margin-top:10px" class="muted">MCP · jetbrains · 127.0.0.1:54118</div>
+          <div style="margin-top:14px"><span class="prompt">›</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+      <div class="statusbar">
+        <span>UTF-8</span>
+        <span>TypeScript</span>
+        <span class="grok-status">Grok:54118</span>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <h1>Open Grok Build</h1>
+    <p>Press <kbd>Ctrl</kbd>+<kbd>Esc</kbd> to open a dedicated terminal tab and launch <b>grok</b> in the project root.</p>
+  </div>
+</div>
+</body>
+</html>
