@@ -1,0 +1,18 @@
+.gradle/
+build/
+.idea/
+.intellijPlatform/
+.kotlin/
+*.iml
+out/
+local-repo/
+.DS_Store
+
+# Secrets — never commit
+.marketplace-token
+signing/private.pem
+signing/*.pem
+*.pem
+
+# Local signing material (regenerate with publish.sh)
+signing/chain.crt

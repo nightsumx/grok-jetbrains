@@ -1,0 +1,3 @@
+<idea-plugin>
+    <!-- Terminal features load only when the Terminal plugin is present. -->
+</idea-plugin>
