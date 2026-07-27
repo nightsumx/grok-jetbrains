@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1200px; height: 760px; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: #1e1f22; color: #dfdfdf;
+  }
+  .chrome {
+    height: 36px; background: #2b2d30; display: flex; align-items: center;
+    padding: 0 14px; gap: 8px; border-bottom: 1px solid #1a1a1c;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .title { margin-left: 12px; font-size: 12px; color: #9a9a9a; }
+  .layout { display: flex; height: 724px; }
+  .sidebar {
+    width: 200px; background: #2b2d30; border-right: 1px solid #1a1a1c;
+    padding: 12px 0; font-size: 13px;
+  }
+  .sb-item { padding: 6px 16px; color: #a0a0a0; }
+  .sb-item.active { background: #43454a; color: #fff; border-radius: 4px; margin: 0 8px; padding: 6px 8px; }
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .tabs { height: 34px; background: #2b2d30; display: flex; align-items: flex-end; gap: 2px; padding: 0 8px; border-bottom: 1px solid #1a1a1c; }
+  .tab { padding: 6px 14px; font-size: 12px; color: #8c8c8c; background: #3c3f41; border-radius: 6px 6px 0 0; }
+  .tab.on { background: #1e1f22; color: #e8e8e8; }
+  .split { flex: 1; display: flex; min-height: 0; }
+  .editor {
+    flex: 1; padding: 14px 18px; font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px; line-height: 1.55; color: #a9b7c6; background: #1e1f22;
+    border-right: 1px solid #3c3f41;
+  }
+  .ln { color: #4a4a4a; display: inline-block; width: 28px; }
+  .kw { color: #cc7832; } .str { color: #6a8759; } .fn { color: #ffc66d; }
+  .sel { background: #214283; color: #e8e8e8; }
+  .menu {
+    position: absolute; left: 340px; top: 210px;
+    background: #2b2d30; border: 1px solid #4a4a4a; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5); width: 240px; padding: 6px 0;
+    font-size: 13px; z-index: 5;
+  }
+  .menu .item { padding: 7px 14px; color: #d0d0d0; display: flex; justify-content: space-between; }
+  .menu .item.hi { background: #4b6eaf; color: #fff; }
+  .menu .item .sc { color: #8c8c8c; font-size: 11px; }
+  .menu .item.hi .sc { color: #cde; }
+  .term {
+    width: 480px; background: #0d0d0d; display: flex; flex-direction: column;
+  }
+  .term-bar {
+    height: 28px; background: #2b2d30; display: flex; align-items: center;
+    padding: 0 10px; font-size: 12px; border-bottom: 1px solid #1a1a1c;
+  }
+  .term-body {
+    flex: 1; padding: 12px 14px; font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px; line-height: 1.45; color: #c8c8c8; overflow: hidden;
+  }
+  .blk { color: #79c0ff; }
+  .code { color: #e6e6e6; }
+  .muted { color: #6a6a6a; }
+  .prompt { color: #79c0ff; }
+  .cursor {
+    display: inline-block; width: 8px; height: 14px; background: #e8e8e8;
+    vertical-align: -2px; margin-left: 2px;
+  }
+  .statusbar {
+    height: 24px; background: #2b2d30; border-top: 1px solid #1a1a1c;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 12px; font-size: 11px; color: #9a9a9a; gap: 14px;
+  }
+  .grok-status { color: #7ee787; font-weight: 600; }
+  .wrap { position: relative; width: 1200px; height: 760px; }
+  .banner {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    background: #111; border: 1px solid #3d3d3d; border-radius: 10px;
+    padding: 12px 18px; font-size: 13px; color: #e8e8e8;
+    box-shadow: 0 12px 40px rgba(0,0,0,.45); white-space: nowrap;
+  }
+  kbd {
+    display: inline-block; background: #2b2d30; border: 1px solid #444;
+    border-radius: 4px; padding: 1px 6px; font-size: 11px; color: #e8e8e8;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="chrome">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="title">WebStorm — my-app</span>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sb-item active">auth.ts</div>
+      <div class="sb-item">routes.ts</div>
+    </div>
+    <div class="main">
+      <div class="tabs"><div class="tab on">auth.ts</div></div>
+      <div class="split">
+        <div class="editor">
+          <div><span class="ln">10</span><span class="kw">export async function</span> <span class="fn">login</span>(req) {</div>
+          <div class="sel"><span class="ln">11</span>&nbsp;&nbsp;<span class="kw">const</span> user = <span class="kw">await</span> db.users.find(req.email)</div>
+          <div class="sel"><span class="ln">12</span>&nbsp;&nbsp;<span class="kw">if</span> (!user) <span class="kw">throw new</span> Error(<span class="str">'not found'</span>)</div>
+          <div class="sel"><span class="ln">13</span>&nbsp;&nbsp;<span class="kw">return</span> signToken(user)</div>
+          <div><span class="ln">14</span>}</div>
+        </div>
+        <div class="term">
+          <div class="term-bar">Grok Build</div>
+          <div class="term-body">
+            <div class="blk">[IDE selection]</div>
+            <div>File: <span class="code">src/auth.ts</span></div>
+            <div>Lines: <span class="code">11-13</span></div>
+            <div style="margin-top:8px" class="muted">```</div>
+            <div class="code">  const user = await db.users.find(req.email)</div>
+            <div class="code">  if (!user) throw new Error('not found')</div>
+            <div class="code">  return signToken(user)</div>
+            <div class="muted">```</div>
+            <div style="margin-top:12px"><span class="prompt">›</span> explain this and add rate limiting<span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="statusbar"><span class="grok-status">Grok:54118</span></div>
+    </div>
+  </div>
+  <div class="menu">
+    <div class="item">Copy <span class="sc">⌘C</span></div>
+    <div class="item">Paste <span class="sc">⌘V</span></div>
+    <div class="item hi">Send to Grok Build <span class="sc">⌥⌘K</span></div>
+    <div class="item">Find Usages <span class="sc">⌥F7</span></div>
+  </div>
+  <div class="banner">
+    Select code → <kbd>⌥⌘K</kbd> / <kbd>Ctrl+Alt+K</kbd> → path, lines, and body injected into the prompt
+  </div>
+</div>
+</body>
+</html>
