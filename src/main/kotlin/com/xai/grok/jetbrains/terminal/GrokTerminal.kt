@@ -13,9 +13,8 @@ import java.util.concurrent.atomic.AtomicReference
 
 object GrokTerminal {
     private val log = Logger.getInstance(GrokTerminal::class.java)
-    private const val TAB_NAME = "Grok Build"
+    const val TAB_NAME = "Grok Build"
 
-    /** Bracketed paste: terminals treat the payload as a single paste, so newlines don't submit. */
     private const val BRACKETED_PASTE_START = "\u001b[200~"
     private const val BRACKETED_PASTE_END = "\u001b[201~"
 
@@ -34,6 +33,23 @@ object GrokTerminal {
             if (win.isFile) return win.absolutePath
         }
         return "grok"
+    }
+
+    fun isGrokOpen(project: Project): Boolean {
+        val result = AtomicReference(false)
+        val app = ApplicationManager.getApplication()
+        if (app.isDispatchThread) {
+            result.set(findGrokWidget(project) != null)
+        } else {
+            app.invokeAndWait { result.set(findGrokWidget(project) != null) }
+        }
+        return result.get()
+    }
+
+    fun findGrokWidget(project: Project): TerminalWidget? {
+        val twm = ToolWindowManager.getInstance(project)
+        val toolWindow = twm.getToolWindow("Terminal") ?: return null
+        return findGrokWidget(toolWindow.contentManager.contents)
     }
 
     fun openOrFocus(project: Project): TerminalWidget? {
@@ -87,7 +103,6 @@ object GrokTerminal {
         }
     }
 
-    /** Type raw bytes into the terminal TTY (no bracketed paste). */
     fun typeText(widget: TerminalWidget, text: String) {
         try {
             val connector = widget.ttyConnector
@@ -99,17 +114,12 @@ object GrokTerminal {
             log.warn("tty write failed", t)
         }
         try {
-            // Flatten newlines so we never auto-submit multi-line via execute.
             widget.sendCommandToExecute(text.replace('\n', ' ').trimEnd())
         } catch (t: Throwable) {
             log.warn("fallback type failed", t)
         }
     }
 
-    /**
-     * Paste [text] into the Grok prompt via bracketed-paste so multi-line
-     * content lands as one buffer, not a series of Enter submits.
-     */
     fun pasteText(widget: TerminalWidget, text: String) {
         val payload = BRACKETED_PASTE_START + text + BRACKETED_PASTE_END
         try {
@@ -124,30 +134,46 @@ object GrokTerminal {
         typeText(widget, text)
     }
 
-    fun sendAtMention(project: Project, mention: String): Boolean {
-        val widget = openOrFocus(project) ?: return false
-        val payload = if (mention.endsWith(" ")) mention else "$mention "
-        typeText(widget, payload)
-        return true
+    /**
+     * Paste into an already-open Grok tab only — never opens a new terminal.
+     * Used by full-auto inject so selection changes don't pop Terminal.
+     */
+    fun injectIfOpen(project: Project, prefix: String): Boolean {
+        writeLastSelectionFile(prefix)
+        val result = AtomicReference(false)
+        ApplicationManager.getApplication().invokeAndWait {
+            val widget = findGrokWidget(project) ?: return@invokeAndWait
+            if (widget.ttyConnector == null) {
+                // Still launching
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    waitForTty(widget, 3000)
+                    try {
+                        Thread.sleep(400)
+                    } catch (_: InterruptedException) {
+                    }
+                    ApplicationManager.getApplication().invokeLater {
+                        pasteText(widget, prefix)
+                    }
+                }
+            } else {
+                pasteText(widget, prefix)
+            }
+            result.set(true)
+        }
+        return result.get()
     }
 
-    /**
-     * Inject a multi-line prompt prefix (file + selection body) into Grok.
-     * If the Grok tab is still launching, wait briefly then paste.
-     */
     fun sendPromptPrefix(project: Project, prefix: String): Boolean {
         val widget = openOrFocus(project) ?: return false
-        // Persist a copy so the user / tools can re-read it if paste is lost.
         writeLastSelectionFile(prefix)
 
         val isNew = widget.ttyConnector == null
         if (isNew) {
-            // Shell just opened; grok is launched async. Wait for TTY + TUI.
             ApplicationManager.getApplication().executeOnPooledThread {
                 waitForTty(widget, timeoutMs = 4000)
-                // Extra beat for grok TUI to take over the prompt.
+                // Wait for grok TUI after shell launches the command.
                 try {
-                    Thread.sleep(600)
+                    Thread.sleep(900)
                 } catch (_: InterruptedException) {
                 }
                 ApplicationManager.getApplication().invokeLater {

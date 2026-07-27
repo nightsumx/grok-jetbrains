@@ -23,6 +23,24 @@ class GrokSettings : PersistentStateComponent<GrokSettings> {
     /** MCP server name used in config.toml. */
     var mcpServerName: String = "jetbrains"
 
+    /**
+     * Full-auto: track selection and inject into Grok prompt without a special key.
+     * (Still never auto-submits — only pastes into the input buffer.)
+     */
+    var autoInjectSelection: Boolean = true
+
+    /** When Grok terminal is focused/opened, inject the latest selection. */
+    var injectOnGrokFocus: Boolean = true
+
+    /**
+     * When the editor selection changes and Grok is already open, re-inject.
+     * Debounced; only selection body by default (see injectOpenFileOnChange).
+     */
+    var injectOnSelectionChange: Boolean = true
+
+    /** Also re-inject "open file" caret context on every caret move (noisier). */
+    var injectOpenFileOnChange: Boolean = false
+
     override fun getState(): GrokSettings = this
 
     override fun loadState(state: GrokSettings) {
