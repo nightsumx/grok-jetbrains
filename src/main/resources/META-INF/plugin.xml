@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.sum.grok.jetbrains</id>
     <name>Grok Build</name>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <vendor email="lineryforjs@gmail.com" url="https://github.com/nightsumx/grok-jetbrains">lineryforjs</vendor>
     <idea-version since-build="242" until-build="261.*"/>
 
@@ -20,9 +20,9 @@
       <h2>What you get</h2>
       <ul>
         <li><b>Open Grok</b> — <code>Ctrl+Esc</code> (⌃Esc) opens a dedicated Terminal tab and runs <code>grok</code>.</li>
-        <li><b>Send selection</b> — <code>Ctrl+Alt+K</code> / <code>⌥⌘K</code> injects the current file,
-            line range, and selected code at the front of the Grok prompt. No MCP round-trip needed
-            for selection context.</li>
+        <li><b>Full-auto selection</b> — selecting code in the editor automatically tracks context
+            and injects it into the Grok prompt when Grok is open (or when you open it).
+            Manual re-send: <code>Ctrl+Alt+K</code> / <code>⌥⌘K</code>.</li>
         <li><b>IDE MCP bridge</b> — a local HTTP MCP server exposes open files, diagnostics, reformat,
             and diff tools. Auto-registers as <code>[mcp_servers.jetbrains]</code> in
             <code>~/.grok/config.toml</code>.</li>
@@ -48,13 +48,18 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>0.1.1</b>
+      <ul>
+        <li><b>Full-auto selection inject</b> — no hotkey required: selection is tracked continuously
+            and pasted into the Grok prompt when Grok opens/focuses or when the selection changes
+            while Grok is already open</li>
+        <li>Settings toggles for auto-inject / inject-on-focus / inject-on-change</li>
+        <li>Persists <code>~/.grok/ide/last-selection.md</code> + <code>selection.json</code></li>
+      </ul>
       <b>0.1.0</b>
       <ul>
         <li>Open Grok Build in the IDE terminal (<code>Ctrl+Esc</code>)</li>
-        <li>Send selection: inject file path, line range, and selected body into the prompt</li>
-        <li>Local IDE MCP server (context, files, diagnostics, reformat, diff)</li>
-        <li>Auto-register MCP in <code>~/.grok/config.toml</code></li>
-        <li>Status bar widget for MCP port</li>
+        <li>Send selection hotkey + local IDE MCP bridge</li>
       </ul>
     ]]></change-notes>
 
@@ -67,6 +72,8 @@
         <postStartupActivity implementation="com.xai.grok.jetbrains.GrokStartup"/>
         <applicationService serviceImplementation="com.xai.grok.jetbrains.settings.GrokSettings"/>
         <applicationService serviceImplementation="com.xai.grok.jetbrains.services.IdeBridgeService"/>
+        <projectService serviceImplementation="com.xai.grok.jetbrains.services.SelectionTracker"/>
+        <projectService serviceImplementation="com.xai.grok.jetbrains.services.SelectionAutoInject"/>
         <applicationConfigurable
                 parentId="tools"
                 instance="com.xai.grok.jetbrains.settings.GrokConfigurable"

@@ -6,12 +6,12 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.xai.grok.jetbrains.services.IdeBridgeService
+import com.xai.grok.jetbrains.services.SelectionAutoInject
 import com.xai.grok.jetbrains.terminal.GrokTerminal
 
 class OpenGrokInTerminalAction : AnAction(), DumbAware {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        // Ensure MCP bridge is up before the user talks to Grok.
         IdeBridgeService.getInstance().startIfEnabled(project)
         val widget = GrokTerminal.openOrFocus(project)
         if (widget == null) {
@@ -23,6 +23,9 @@ class OpenGrokInTerminalAction : AnAction(), DumbAware {
                     NotificationType.ERROR,
                 )
                 .notify(project)
+            return
         }
+        // Full-auto: inject current selection after Grok is up.
+        SelectionAutoInject.getInstance(project).onGrokOpened()
     }
 }

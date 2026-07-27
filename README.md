@@ -56,9 +56,9 @@ On project open the plugin:
 2. Writes `~/.grok/ide/{port}.lock` (+ `active.json`)  
 3. Upserts a marked block in `~/.grok/config.toml` for `[mcp_servers.jetbrains]`
 
-### Send selection = prompt-prefix inject
+### Full-auto selection inject
 
-Claude Code auto-attaches selection when you submit. Grok has no that hook yet, so on **Send** the plugin pastes:
+Selection is tracked continuously (Claude-style). When Grok is open — or when you open it — the plugin pastes:
 
 ```text
 [IDE selection]
@@ -72,7 +72,9 @@ Lines: 10-42
 
 ```
 
-via **bracketed paste** (newlines don’t submit). Also written to `~/.grok/ide/last-selection.md`.
+via **bracketed paste** (never auto-submits). Also written to `~/.grok/ide/last-selection.md` + `selection.json`.
+
+Default: auto on selection change while Grok is open, and on Grok open/focus. Hotkey `⌥⌘K` remains for manual re-send. Toggle under **Settings → Tools → Grok Build**.
 
 ## MCP tools
 
